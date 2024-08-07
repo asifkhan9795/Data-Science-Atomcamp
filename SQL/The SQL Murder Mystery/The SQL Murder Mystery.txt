@@ -1,0 +1,159 @@
+
+              
+              
+--Crime Type :: ​murder​
+--Time       :: ​Jan.15, 2018​
+--Place      :: ​SQL City​
+/*
+select * From crime_scene_report
+where type = 'murder'
+and date = '20180115'
+and city = 'SQL City'
+*/
+--------------------------------------------------------------------
+-- witnesses    :: 2
+-- 1st Witness :: lives at last house on "Northwestern Dr"
+-- 2nd Witness :: Annabel, lives somewhere on "Franklin Ave"
+
+/*
+select * From person
+where address_street_name = 'Northwestern Dr'
+order by address_number desc -- as given the last house on Northwestern
+limit 1
+*/
+----------------------------------------------------------
+-- 14887	Morty Schapiro	118009	4919	Northwestern Dr	111564949
+--------------------------------------------------------
+/*
+select * From person
+where address_street_name = 'Franklin Ave'
+and name like '%Annabel%' -- to search for any name contain Annabel word
+limit 100
+*/
+-----------------------------------------------------------
+-- 16371	Annabel Miller	490173	103	Morty Schapiro	318771143
+-----------------------------------------------------------
+/*
+Select * From person
+where id in (14887, 16371)
+*/
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+--Query No: 3
+-- Interview of Two Witnesses
+/*
+select * From interview
+where person_id in (14887,16371)
+*/
+-- Eivdence
+-- "Get Fit Now Gym" bag
+-- membership number on the bag started with "48Z"
+-- gold members 
+-- Car number plate that included "H42W"
+-- data : last week on January the 9th
+--------------------------------------------------------------------
+/*
+select p.*, gf.*,ci.* From drivers_license as dl
+inner join person as p on dl.id = p.license_id
+inner join get_fit_now_member as gf on p.id = gf.person_id
+inner join get_fit_now_check_in as ci on gf.id = ci.membership_id
+where plate_number like '%H42W%'
+and membership_status = 'gold'
+*/
+------------------------------------------------------------------
+-- Name of murder is "Jeremy Bomwers"
+-------------------------------------------------------------------
+-- Query No: 4
+/*
+INSERT INTO solution VALUES (1, 'Jeremy Bowers');
+        
+        SELECT value FROM solution;
+*/
+------------------------------------------------------
+-- we solve the mysery that "Jeremy Bomwers" is a murderer
+-----------------------------------------------------------------
+-- Query No: 5
+-- The Real master mind behind of the murder is not Jeremy Bomwers so lets check his interview
+-- ID :67318
+-- Name: Jeremy Browers
+/*
+select * From interview
+where person_id = '67318'
+*/
+
+-- Eivdence provided by Jeremy Browers
+-- Gender : woman
+-- height : 5'5" (65") or 5'7" (67")
+-- Hair color : red
+-- car model : Tesla Model S
+-- she attended the SQL Symphony Concert 3 times in December 2017
+---------------------------------------------------------------------
+/*
+select * from drivers_license
+where hair_color = 'red'
+and gender = 'female'
+and car_make like '%Tesla%'
+and car_model like '%model%'
+and height between '65' and '67'
+limit 100
+*/
+-------------------------------------------------------------------
+-- id : 918773 , ,
+---------------------------------------------------------------------
+/*
+select p. * from drivers_license as dl
+inner join person as p on dl.id = p.license_id
+where hair_color = 'red'
+and gender = 'female'
+and car_make like '%Tesla%'
+and car_model like '%model%'
+and height between '65' and '67'
+limit 100
+*/
+--------------------------------------------------------------
+-- Query NO: 6
+-- she attended the SQL Symphony Concert 3 times in December 2017
+/*
+select
+person_id,
+event_name,
+count(*)
+From facebook_event_checkin
+where date between 20171201 and 20171231
+and event_name = 'SQL Symphony Concert'
+group by person_id
+having count(*) >=3
+*/
+---------------------------------------------------------------
+with cte as 
+(
+select
+person_id,
+event_name,
+count(*)
+From facebook_event_checkin
+where date between 20171201 and 20171231
+and event_name = 'SQL Symphony Concert'
+group by person_id
+having count(*) >=3
+)
+
+-- select * From cte----
+
+select p.*, fb.* from drivers_license as dl
+inner join person as p on dl.id = p.license_id
+inner join cte as fb on fb.person_id = p.id
+where hair_color = 'red'
+and gender = 'female'
+and car_make like '%Tesla%'
+and car_model like '%model%'
+and height between '65' and '67'
+limit 100
+-----------------------------------------------------------------
+INSERT INTO solution VALUES (1, 'Miranda Priestly');
+        
+        SELECT value FROM solution;
+----------------------------------------------------------------
+Congratulation you Solve the SQL Mystery
+---------------------------------------------------------------
